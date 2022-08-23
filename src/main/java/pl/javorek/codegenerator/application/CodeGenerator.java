@@ -1,5 +1,5 @@
 package pl.javorek.codegenerator.application;
 
-public interface CodeGenerator<C> {
-  void generateCode();
+public interface CodeGenerator<T> {
+  Result generate(T codeMetadata);
 }
