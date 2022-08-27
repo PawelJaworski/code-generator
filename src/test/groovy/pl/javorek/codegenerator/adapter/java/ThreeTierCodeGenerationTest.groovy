@@ -31,7 +31,7 @@ class ThreeTierCodeGenerationTest extends Specification {
         then:
         def expectedClass = JavaClassMetadata.builder()
                 .classPackage("base.package.testcontext.application")
-                .className(FACADE_CONTEXT)
+                .className("${FACADE_CONTEXT}Facade")
                 .build()
         javaClassGenerator.generatedClasses == [ expectedClass ]
     }
