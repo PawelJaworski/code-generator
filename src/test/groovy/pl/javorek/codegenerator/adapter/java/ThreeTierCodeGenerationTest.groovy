@@ -10,11 +10,14 @@ class ThreeTierCodeGenerationTest extends Specification {
 
     CodeGenerator<JavaClassMetadata> generator
     JavaClassGeneratorTestImpl javaClassGenerator
+    JavaMethodGeneratorTestImpl javaMethodGenerator
 
     def setup() {
         javaClassGenerator = new JavaClassGeneratorTestImpl()
+        javaMethodGenerator = new JavaMethodGeneratorTestImpl()
         def config = CommandFacadeGenerationConfig.builder()
                 .javaClassGenerator(javaClassGenerator)
+                .javaMethodGenerator(javaMethodGenerator)
                 .build()
         generator = config.generator
     }
@@ -34,5 +37,22 @@ class ThreeTierCodeGenerationTest extends Specification {
                 .className("${FACADE_CONTEXT}Facade")
                 .build()
         javaClassGenerator.generatedClasses == [ expectedClass ]
+    }
+
+    def "when no method exists generate method"() {
+        given:
+        def classMetadata = CqrsCommandMetadata.builder()
+                .basePackage(BASE_PACKAGE)
+                .useCase(USE_CASE)
+                .facadeContext(FACADE_CONTEXT)
+                .build()
+        when:
+        generator.generate(classMetadata)
+        then:
+        def expectedMethod = JavaMethodMetadata.builder()
+                .classQualifiedName("base.package.testcontext.application.TestContextFacade")
+                .methodName("testUseCase")
+                .build()
+        javaMethodGenerator.generatedMethods == [ expectedMethod ]
     }
 }
