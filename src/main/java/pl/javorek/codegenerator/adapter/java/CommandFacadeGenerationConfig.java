@@ -6,6 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import pl.javorek.codegenerator.application.CodeGenerator;
 import pl.javorek.codegenerator.application.Try;
 
+/**
+ * Template for:
+ * * three tier
+ * * CQRS
+ */
 @Slf4j
 @Builder
 @RequiredArgsConstructor
