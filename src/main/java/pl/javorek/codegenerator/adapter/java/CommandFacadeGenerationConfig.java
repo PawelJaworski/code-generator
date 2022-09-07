@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pl.javorek.codegenerator.application.CodeGenerator;
+import pl.javorek.codegenerator.application.CodePredicate;
+import pl.javorek.codegenerator.application.ConditionalAction;
 import pl.javorek.codegenerator.application.Try;
 
 /**
@@ -15,16 +17,15 @@ import pl.javorek.codegenerator.application.Try;
 @Builder
 @RequiredArgsConstructor
 public class CommandFacadeGenerationConfig {
+  private final CodePredicate<JavaClassMetadata> isClassExists;
   private final CodeGenerator<JavaClassMetadata> javaClassGenerator;
   private final CodeGenerator<JavaMethodMetadata> javaMethodGenerator;
 
   public CodeGenerator<CqrsCommandMetadata> getGenerator() {
-    return cqrsCommandMetadata -> {
-      Try.failureOnException(() -> {
-        generateFacade(cqrsCommandMetadata);
-        generateCommandMethod(cqrsCommandMetadata);
-      });
-    };
+    return cqrsCommandMetadata -> Try.failureOnException(() -> {
+      generateFacade(cqrsCommandMetadata);
+      generateCommandMethod(cqrsCommandMetadata);
+    });
   }
 
   private void generateFacade(CqrsCommandMetadata metadata) {
@@ -34,8 +35,11 @@ public class CommandFacadeGenerationConfig {
       .className(String.format("%sFacade", metadata.getFacadeContext()))
       .build();
 
-    log.info("Generating CommandFacade: {}", javaClassMetadata);
-    javaClassGenerator.generate(javaClassMetadata);
+    ConditionalAction
+            .ifFalse(isClassExists)
+            .then(javaClassGenerator::generate)
+            .apply(javaClassMetadata)
+            .orElse(it -> log.info("CommandFacade: {} already exists", it));
   }
 
   private void generateCommandMethod(CqrsCommandMetadata metadata) {

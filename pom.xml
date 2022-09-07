@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.paweljaworski</groupId>
 	<artifactId>code-generator</artifactId>
-	<version>0.0.3</version>
+	<version>0.0.4-SNAPSHOT</version>
 	<name>code-generator</name>
 	<description>Code Generator</description>
 
@@ -141,7 +141,7 @@
 				<executions>
 					<execution>
 						<id>sign-artifacts</id>
-						<phase>verify</phase>
+						<phase>none</phase>
 						<goals>
 							<goal>sign</goal>
 						</goals>
